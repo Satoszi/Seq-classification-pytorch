@@ -1,7 +1,7 @@
 # Seq-classification-pytorch
 
-This is a simple implementation of model that is able to distinguish sequences of digits (MNIST) images with a length of 3 - 30. 
-The model was trained for 1 epoch containing 60k examples (After this 1 epoch, the model does not significantly improve the accuracy)  using a mnist dataset consisting of different lengths of digits sequences)
+This is a simple implementation of LSTM model that is able to distinguish sequences of digits (MNIST) images with a length of 3 - 30. 
+The model was trained for 1 epoch containing 60k examples (After this 1 epoch, the model does not significantly improve the accuracy).
 
 ### Model:
 
@@ -11,7 +11,7 @@ The model was trained for 1 epoch containing 60k examples (After this 1 epoch, t
 
 For a clean dataset model achieves 98.8% accuracy for a validation set.
 
-There is also applied weak supervision scenario, in that way, that generator generates random labels with defined probability WSR. WSR = 0.2 means that in 20% examples labels will be swapped.
+There is also applied weak supervision scenario, in that way, that generator generates random labels with defined probability WSR. WSR = 0.2 means that labels of 20% random examples will be swapped.
 
 ![](resources/results_acc.png)
 
