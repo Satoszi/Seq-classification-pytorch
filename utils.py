@@ -3,14 +3,25 @@ from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 import torch
 import numpy as np
+import itertools
+import matplotlib.pyplot as plt
 
 class ValueOutOfRangeError(Exception):
     pass
     
 class MnistSequences(Dataset):
     
-    def __init__(self, train=True, min_seq_length = 3, max_seq_length = 30, avg_seq = 10., 
-    std_seq = 3., batch_size = 64, weak_supervision_rate = 0):
+    def __init__(
+        self, 
+        train=True, 
+        min_seq_length = 3, 
+        max_seq_length = 30, 
+        avg_seq = 10., 
+        std_seq = 3., 
+        batch_size = 64, 
+        weak_supervision_rate = 0,
+        searched_digit = 4,
+    ):
         
         if weak_supervision_rate > 1 or weak_supervision_rate < 0:
             raise ValueOutOfRangeError
@@ -31,7 +42,7 @@ class MnistSequences(Dataset):
         
         self.iterations_counter = 0
         self.sequence_length = self.get_random_sequence_length()
-        
+        self.searched_digit = searched_digit
 
     def __len__(self):
           return len(self.dataset)
@@ -41,7 +52,12 @@ class MnistSequences(Dataset):
 
     def set_batch_size(self, batch_size):
         self.batch_size = batch_size
-        
+
+    def set_weak_supervision_rate(self, weak_supervision_rate):
+        if weak_supervision_rate > 1 or weak_supervision_rate < 0:
+            raise ValueOutOfRangeError
+        self.weak_supervision_rate = weak_supervision_rate
+
     def get_random_sequence_length(self):
         sequence_length = torch.normal(mean=torch.tensor(self.avg_seq), std=torch.tensor(self.std_seq))
         sequence_length = sequence_length.type(torch.int)
@@ -65,10 +81,51 @@ class MnistSequences(Dataset):
 
         y_mnist_labels = [self.dataset[i][1] for i in range(index,(index + self.sequence_length))]
         y_sequence_label = 0
-        if 4 in y_mnist_labels: 
+        if self.searched_digit in y_mnist_labels: 
             y_sequence_label = 1
         
+        # weak supervision scenerio
         if np.random.random() < self.weak_supervision_rate:
             y_sequence_label = 1 - y_sequence_label
         
         return x_sequence_point, y_sequence_label
+        
+        
+def validate(data_loader, model, batches_number, device):
+    N = 0
+    num_correct = 0
+    
+    # Set model to evaluate state
+    model.eval()
+
+    with torch.no_grad():
+        for x_data, y_data in itertools.islice(data_loader, 0, batches_number):
+            
+            x_data = x_data.to(device=device).squeeze(1)
+            y_data = y_data.to(device=device)
+
+            predictions = model(x_data)
+            _, predictions = predictions.max(1)
+            num_correct += (predictions == y_data).sum()
+            N += predictions.size(0)
+
+    return float(num_correct / N)
+    
+    
+def save_fig(history, fig_name):
+    validation_history = [i[0] for i in history]
+    train_history = [i[1] for i in history]
+    
+    plt.figure(1, figsize = (10, 7)) 
+    
+    plt.plot(train_history)  
+    plt.plot(validation_history)  
+    plt.title('model accuracy')  
+    plt.ylabel('accuracy')  
+    plt.xlabel('batches*n')  
+    plt.legend(['train', 'valid']) 
+    plt.grid()
+    
+    path = "results//"+fig_name
+    plt.savefig(path, bbox_inches='tight')
+    plt.close()
