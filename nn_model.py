@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 # Recurrent neural network with LSTM (many-to-one)
 class LSTM_Model(nn.Module):
-    def __init__(self, input_size, lstm_hidden_size, num_lstm_layers, num_classes, device):
+    def __init__(self, input_size, lstm_hidden_size, num_lstm_layers, device):
         super(LSTM_Model, self).__init__()
         self.device = device
         self.lstm_hidden_size = lstm_hidden_size
@@ -18,7 +18,7 @@ class LSTM_Model(nn.Module):
         self.fc1 = nn.Linear(64*3*3, 128)
         
         self.lstm = nn.LSTM(128, lstm_hidden_size, num_lstm_layers, batch_first=True)
-        self.fc2 = nn.Linear(lstm_hidden_size, num_classes)
+        self.fc2 = nn.Linear(lstm_hidden_size, 2)
 
     def forward(self, x):
         
