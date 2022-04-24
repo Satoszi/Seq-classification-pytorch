@@ -1,7 +1,9 @@
 # Seq-classification-pytorch
 
-This is a simple implementation of LSTM model that is able to distinguish sequences of digits (MNIST) images with a length of 3 - 30. 
+This is a simple implementation of LSTM model that is able to distinguish sequences of digits (MNIST) images with a length of 3 - 30 in order to look for a specific digit (in this case 4). 
 The model was trained for 1 epoch containing 60k examples (After this 1 epoch, the model does not significantly improve the accuracy).
+
+![](resources/example.png)
 
 ### Model:
 
