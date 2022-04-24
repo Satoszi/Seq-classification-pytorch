@@ -17,8 +17,13 @@ There is also applied weak supervision scenario, in that way, that generator gen
 
 ![](resources/results_acc.png)
 
+WSR = 0 for training set
 ![](results/training_history_wsr_0.png)
+
+WSR = 0.2 for training set
 ![](results/training_history_wsr_0.2.png)
+
+WSR = 0.4 for training set
 ![](results/training_history_wsr_0.4.png)
 
 
@@ -31,7 +36,6 @@ Model achieves similar results for different sequence lengths (from a range 3 to
 
 Possible improvements:
 
-There are many ways and things to improve. 
 
 * The dataset can be balanced. I did not do this since the probability of occurrence of digit 4 in sequence of 10 digits with avg length = 10 and std = 3 (where min length = 3 and max length = 30) is about 61%, so the dataset is not unbalanced significantly.
 * Pretrained network can be used (such as VGG, resnet, mobilenet) before LSTM layers.
